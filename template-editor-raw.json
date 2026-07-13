@@ -1,0 +1,10 @@
+{
+  "LEMONADE_BACKEND": {
+    "value": "cpu",
+    "description": "llama.cpp backend for inference. 'cpu' is reliable on Railway's managed containers. Advanced GPU hosts may try 'vulkan'/'rocm'."
+  },
+  "LEMONADE_DEFAULT_MODEL": {
+    "value": "Qwen3-0.6B-GGUF",
+    "description": "Model ID auto-downloaded and loaded on first request (HuggingFace GGUF id)."
+  }
+}

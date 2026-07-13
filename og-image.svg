@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FACC15"/><stop offset="100%" stop-color="#84CC16"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Lemon graphic -->
+  <ellipse cx="230" cy="315" rx="120" ry="95" fill="#FFFFFF" opacity="0.95"/>
+  <ellipse cx="230" cy="315" rx="92" ry="72" fill="#FDE68A"/>
+  <path d="M330 230 Q380 195 405 235 Q360 260 330 230 Z" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Title text -->
+  <text x="420" y="300" font-family="Inter, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#FFFFFF">Lemonade Server</text>
+  <text x="420" y="360" font-family="Inter, -apple-system, sans-serif" font-size="28" fill="#FFFFFF" opacity="0.95">Local AI on Railway</text>
+  <!-- Feature badges -->
+  <rect x="420" y="400" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
+  <text x="520" y="430" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">OpenAI API</text>
+  <rect x="640" y="400" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
+  <text x="740" y="430" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">Auto-download</text>
+</svg>

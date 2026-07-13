@@ -1,0 +1,12 @@
+{
+  "LEMONADE_BACKEND": {
+    "defaultValue": "cpu",
+    "description": "llama.cpp backend for inference. 'cpu' is reliable on Railway's managed containers (no GPU passthrough). Advanced GPU hosts may try 'vulkan'/'rocm'.",
+    "isOptional": true
+  },
+  "LEMONADE_DEFAULT_MODEL": {
+    "defaultValue": "Qwen3-0.6B-GGUF",
+    "description": "Model ID to load on first request (auto-downloaded from HuggingFace). Any Lemonade GGUF model id works, e.g. 'Qwen3-0.6B-GGUF', 'nomic-embed-text-v1-GGUF'. Leave as-is for a tiny default.",
+    "isOptional": true
+  }
+}

@@ -1,0 +1,14 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway injects $PORT; entrypoint.sh maps it to lemond's listen port.
+healthcheckPath = "/live"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+[[deploy.volumeMounts]]
+name = "lemonade-cache"
+mountPath = "/root/.cache"
