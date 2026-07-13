@@ -1,20 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#FACC15"/><stop offset="100%" stop-color="#84CC16"/>
+      <stop offset="0%" stop-color="#FACC15"/>
+      <stop offset="100%" stop-color="#84CC16"/>
+    </linearGradient>
+    <linearGradient id="lemon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="100%" stop-color="#FACC15"/>
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <!-- Lemon graphic -->
-  <ellipse cx="230" cy="315" rx="120" ry="95" fill="#FFFFFF" opacity="0.95"/>
-  <ellipse cx="230" cy="315" rx="92" ry="72" fill="#FDE68A"/>
-  <path d="M330 230 Q380 195 405 235 Q360 260 330 230 Z" fill="#FFFFFF" opacity="0.9"/>
+  <path d="M120 315 C138 280 185 205 270 205 C355 205 402 280 420 315 C402 350 355 425 270 425 C185 425 138 350 120 315 Z" fill="url(#lemon)" stroke="#EAB308" stroke-width="5"/>
+  <path d="M408 248 Q450 210 482 222 Q450 256 408 248 Z" fill="#FFFFFF" opacity="0.92"/>
+  <ellipse cx="232" cy="270" rx="48" ry="26" fill="#FFFFFF" opacity="0.45"/>
+  <circle cx="225" cy="345" r="7" fill="#FFFFFF" opacity="0.45"/>
+  <circle cx="300" cy="375" r="7" fill="#FFFFFF" opacity="0.45"/>
   <!-- Title text -->
-  <text x="420" y="300" font-family="Inter, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#FFFFFF">Lemonade Server</text>
-  <text x="420" y="360" font-family="Inter, -apple-system, sans-serif" font-size="28" fill="#FFFFFF" opacity="0.95">Local AI on Railway</text>
+  <text x="470" y="300" font-family="Inter, -apple-system, sans-serif" font-size="60" font-weight="700" fill="#FFFFFF">Lemonade Server</text>
+  <text x="470" y="358" font-family="Inter, -apple-system, sans-serif" font-size="28" fill="#FFFFFF" opacity="0.95">OpenAI-compatible local AI on Railway</text>
   <!-- Feature badges -->
-  <rect x="420" y="400" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
-  <text x="520" y="430" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">OpenAI API</text>
-  <rect x="640" y="400" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
-  <text x="740" y="430" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">Auto-download</text>
+  <rect x="470" y="398" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
+  <text x="570" y="428" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">OpenAI API</text>
+  <rect x="690" y="398" width="200" height="40" rx="20" fill="#FFFFFF" opacity="0.2"/>
+  <text x="790" y="428" font-family="Inter, -apple-system, sans-serif" font-size="18" fill="#FFFFFF" text-anchor="middle">Auto-download</text>
 </svg>
