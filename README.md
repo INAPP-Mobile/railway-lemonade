@@ -11,6 +11,7 @@ A self-hosted, OpenAI-compatible local-AI server powered by [Lemonade](https://g
 Lemonade Server runs as a single Docker container wrapping the official `ghcr.io/lemonade-sdk/lemonade-server:latest` image. A thin entrypoint launches the `lemond` binary on Railway's injected `$PORT`, exposes a `/live` healthcheck, and defaults to the **CPU** backend (Railway's managed containers have no GPU passthrough). Models auto-download from HuggingFace on first request and are cached on a persistent Railway volume, so reboots don't re-fetch weights.
 
 - **Default Port:** Railway injects `$PORT` (the server binds it directly)
+- **Built-in Web UI:** Lemonade's own model manager + chat GUI is served at the service root (`/`) on the same port as the API — open your Railway domain in a browser to use it (no Open WebUI or extra service needed)
 - **Health Check:** `GET /live` → `{"status":"ok"}`
 - **Startup Time:** ~10-20 seconds (server boots; model weights download on demand)
 - **Resource Usage:** CPU-only; a 0.6B Q4 model is usable, larger models are slow
@@ -21,12 +22,12 @@ Lemonade Server runs as a single Docker container wrapping the official `ghcr.io
 - **Zero model baking** — No weights in the image; pull any GGUF from HuggingFace at runtime.
 - **Persistent model cache** — A Railway volume at `/root/.cache` keeps downloaded weights and config across deploys.
 - **Privacy-first** — All inference stays in your Railway project; no third-party API keys required.
-- **Drop-in for Open WebUI** — Point Open WebUI's `OPENAI_API_BASE_URL` at this service's `/v1` to get a chat UI on top of your self-hosted models (no OpenAI key needed).
+- **Built-in web UI** — Lemonade ships its own browser GUI (model manager + chat) on the same port as the API, so you get a chat interface with no extra services.
 
 ## Common Use Cases
 
 - Self-hosted chat completion backend for apps expecting OpenAI endpoints
-- **Chat UI via Open WebUI** — Run Open WebUI as a second service and connect it to this server's `/v1` for a full chat front-end
+- **Built-in chat UI** — Open the service URL in a browser for Lemonade's own model manager + chat interface (no separate front-end service needed)
 - Private embeddings endpoint for RAG / semantic search
 - Local image generation and text-to-speech (TTS) without cloud providers
 - A portable OpenAI-compatible API for experimentation and prototyping
