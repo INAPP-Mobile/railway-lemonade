@@ -1,58 +1,96 @@
-# Lemonade Server — Railway Template
+# Lemonade Server
 
-A self-hosted, OpenAI-compatible local-AI server powered by [Lemonade](https://github.com/lemonade-sdk/lemonade) (AMD-backed, multi-backend: CPU / Vulkan / ROCm), deployed as a single Railway service. Drop in any HuggingFace GGUF model id and serve chat, completions, embeddings, images, audio, and more via standard OpenAI endpoints.
+A self-hosted, OpenAI-compatible local-AI server powered by [Lemonade](https://github.com/lemonade-sdk/lemonade) (AMD-backed, multi-backend), deployed as a single Railway service. Drop in any HuggingFace GGUF model id and serve chat, completions, embeddings, images, audio, and more via standard OpenAI endpoints.
 
-## Features
+# Deploy and Host
 
-- **OpenAI-compatible API** — `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, `/v1/models`, plus image/audio endpoints.
-- **Auto model download** — Models pull from HuggingFace on first request; nothing to pre-bake.
-- **Persistent cache** — One Railway volume at `/root/.cache` keeps downloaded model weights and config across deploys (Railway allows one volume per service).
-- **CPU by default** — Reliable first boot on Railway's managed containers (no GPU passthrough needed).
-- **Railway-native** — Honors Railway's injected `$PORT`; liveness probe at `/live`.
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/template/new?template=https://github.com/INAPP-Mobile/railway-lemonade)
 
-## Architecture
+## About Hosting
 
-    Railway CDN ──► Lemonade container (lemond :$PORT)
-                        ├── /live            (health)
-                        ├── /v1/chat/completions
-                        ├── /v1/models
-                        └── volume /root/.cache  (hf models + lemonade config/metadata)
+Lemonade Server runs as a single Docker container wrapping the official `ghcr.io/lemonade-sdk/lemonade-server:latest` image. A thin entrypoint launches the `lemond` binary on Railway's injected `$PORT`, exposes a `/live` healthcheck, and defaults to the **CPU** backend (Railway's managed containers have no GPU passthrough). Models auto-download from HuggingFace on first request and are cached on a persistent Railway volume, so reboots don't re-fetch weights.
 
-> **Note on volumes:** Railway allows **one volume per service** on this plan. We mount a single volume at `/root/.cache`, which covers both `/root/.cache/huggingface` (downloaded model weights) and `/root/.cache/lemonade` (config + model metadata). The `/opt/lemonade/llama` backend binaries are not persisted (they auto-install and are small); if a backend reinstall is unwanted, bump the volume to a larger tier or accept the one-time install.
+- **Default Port:** Railway injects `$PORT` (the server binds it directly)
+- **Health Check:** `GET /live` → `{"status":"ok"}`
+- **Startup Time:** ~10-20 seconds (server boots; model weights download on demand)
+- **Resource Usage:** CPU-only; a 0.6B Q4 model is usable, larger models are slow
 
-## Deploy
+## Why Deploy
 
-1. Click **Deploy on Railway** (or link this folder as a new service).
-2. Wait for the build (pulls `ghcr.io/lemonade-sdk/lemonade-server:latest`).
-3. The server starts in CPU mode and is reachable at your Railway domain on `/v1/...`.
-4. Load a model (auto-downloads):
+- **OpenAI-compatible API** — Any OpenAI SDK works against `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, `/v1/models`, plus image/audio endpoints.
+- **Zero model baking** — No weights in the image; pull any GGUF from HuggingFace at runtime.
+- **Persistent model cache** — A Railway volume at `/root/.cache` keeps downloaded weights and config across deploys.
+- **Privacy-first** — All inference stays in your Railway project; no third-party API keys required.
+- **Drop-in for Open WebUI** — Point Open WebUI's `OPENAI_API_BASE_URL` at this service's `/v1` to get a chat UI on top of your self-hosted models (no OpenAI key needed).
 
-       curl -X POST https://<railway-domain>/v1/load \
-         -H "Content-Type: application/json" \
-         -d '{"model_name":"Qwen3-0.6B-GGUF"}'
+## Common Use Cases
 
-5. Chat (OpenAI SDK):
+- Self-hosted chat completion backend for apps expecting OpenAI endpoints
+- **Chat UI via Open WebUI** — Run Open WebUI as a second service and connect it to this server's `/v1` for a full chat front-end
+- Private embeddings endpoint for RAG / semantic search
+- Local image generation and text-to-speech (TTS) without cloud providers
+- A portable OpenAI-compatible API for experimentation and prototyping
 
-       from openai import OpenAI
-       client = OpenAI(base_url="https://<railway-domain>/v1", api_key="lemonade")
-       print(client.chat.completions.create(
-           model="Qwen3-0.6B-GGUF",
-           messages=[{"role":"user","content":"Hello, Lemonade!"}]
-       ).choices[0].message.content)
+## Dependencies for
+
+### Deployment Dependencies
+
+- **HuggingFace reachability** — Model weights download from `huggingface.co` on first load. If egress is blocked, enable **Outbound IPv6** in the project's Settings.
+- **CPU compute** — No GPU needed; smaller GGUF models (e.g. `Qwen3-0.6B-GGUF`) give the best latency on CPU.
+
+## API Endpoints
+
+### `GET /live`
+Liveness probe for Railway's healthcheck. Returns `{"status":"ok"}`.
+
+### `GET /v1/models`
+List models available locally (those downloaded/cached).
+
+### `POST /v1/load`
+Download and load a model by id (auto-fetches from HuggingFace):
+```json
+{ "model_name": "Qwen3-0.6B-GGUF" }
+```
+
+### `POST /v1/chat/completions`
+OpenAI-compatible chat completion. The model auto-downloads on first use if not already loaded.
+
+### `POST /v1/completions`, `POST /v1/embeddings`
+Text completions and embedding vectors, OpenAI-compatible.
 
 ## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LEMONADE_BACKEND` | `cpu` | llama.cpp backend. `cpu` is safe on Railway. GPU hosts may try `vulkan`/`rocm`. |
+| `LEMONADE_BACKEND` | `cpu` | llama.cpp backend. `cpu` is reliable on Railway; GPU hosts may try `vulkan`/`rocm`. |
 | `LEMONADE_DEFAULT_MODEL` | `Qwen3-0.6B-GGUF` | Model id auto-loaded on first request. |
 
 ## Notes / Limitations
 
 - Railway's managed containers do **not** expose AMD/NVIDIA devices, so ROCm/Vulkan GPU backends are not available by default — CPU is the reliable path.
-- On CPU, inference is slow: a 0.6B Q4 model can take 1-3+ minutes for a short reply. This is expected; the server returns HTTP 200 but generation is CPU-bound. Use a small model (e.g. `Qwen3-0.6B-GGUF`) for reasonable latency.
-- First model load downloads weights from HuggingFace (enable **Outbound IPv6** in project Settings if egress is blocked).
-- The HuggingFace cache + config live on a single Railway volume at `/root/.cache`, so reboots don't re-download.
+- **CPU inference is slow and model-size bound.** There is no GPU on Railway, so everything runs on CPU. A tiny model like `Qwen3-0.6B-GGUF` (≈0.4 GB, Q4) gives the best latency (still often 1-3+ minutes per short reply). Models with more parameters or heavier quantization (e.g. 1.5B-3B+) consume more RAM and take exponentially longer per token, and large models can exceed the container's memory and crash or get OOM-killed. **Stick to small GGUF models (≤ ~1B params, Q4/Q3) for usable CPU latency.**
+- The server returns HTTP 200 but generation is CPU-bound — first-token latency and throughput scale directly with model size. Size down if responses feel too slow.
+- Railway allows **one volume per service**; we mount a single volume at `/root/.cache` covering both the HuggingFace cache and the Lemonade config.
+
+## Quick Start
+
+1. Deploy via the button above (or link this repo as a new service).
+2. Wait for the build to finish.
+3. Load a model (auto-downloads):
+   ```bash
+   curl -X POST https://<railway-domain>/v1/load \
+     -H "Content-Type: application/json" \
+     -d '{"model_name":"Qwen3-0.6B-GGUF"}'
+   ```
+4. Chat with the OpenAI SDK:
+   ```python
+   from openai import OpenAI
+   client = OpenAI(base_url="https://<railway-domain>/v1", api_key="lemonade")
+   print(client.chat.completions.create(
+       model="Qwen3-0.6B-GGUF",
+       messages=[{"role":"user","content":"Hello, Lemonade!"}]
+   ).choices[0].message.content)
+   ```
 
 ## Resources
 
