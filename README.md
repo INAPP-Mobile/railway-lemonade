@@ -4,7 +4,7 @@ A self-hosted, OpenAI-compatible local-AI server powered by [Lemonade](https://g
 
 # Deploy and Host
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/template/new?template=https://github.com/INAPP-Mobile/railway-lemonade)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/iP0utK)
 
 ## About Hosting
 
