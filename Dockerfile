@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Wrap the official Lemonade server image so Railway can inject its $PORT.
 # Upstream: https://github.com/lemonade-sdk/lemonade/pkgs/container/lemonade-server
-FROM ghcr.io/lemonade-sdk/lemonade-server:latest
+FROM ghcr.io/lemonade-sdk/lemonade-server:v2026.47.1
 
 # curl is handy for Railway's HTTP healthcheck probe and in-container diagnostics.
 # The upstream image is Ubuntu-based; use apt.
