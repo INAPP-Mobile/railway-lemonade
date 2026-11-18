@@ -79,14 +79,14 @@ Text completions and embedding vectors, OpenAI-compatible.
 2. Wait for the build to finish.
 3. Load a model (auto-downloads):
    ```bash
-   curl -X POST https://<railway-domain>/v1/load \
+   curl -X POST https://{railway-domain}/v1/load \
      -H "Content-Type: application/json" \
      -d '{"model_name":"Qwen3-0.6B-GGUF"}'
    ```
 4. Chat with the OpenAI SDK:
    ```python
    from openai import OpenAI
-   client = OpenAI(base_url="https://<railway-domain>/v1", api_key="lemonade")
+   client = OpenAI(base_url="https://{railway-domain}/v1", api_key="lemonade")
    print(client.chat.completions.create(
        model="Qwen3-0.6B-GGUF",
        messages=[{"role":"user","content":"Hello, Lemonade!"}]
